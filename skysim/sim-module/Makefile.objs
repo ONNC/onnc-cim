@@ -1,0 +1,7 @@
+skysim_OBJS = bus.o minitrace.o sim_object.o statistics.o trace.o
+
+$(addprefix $(obj)/,$(skysim_OBJS)): QEMU_CXXFLAGS += $(SKYSIM_CXXFLAGS)
+$(addprefix $(obj)/,$(skysim_OBJS)): QEMU_CFLAGS += $(SKYSIM_CFLAGS)
+
+sim-obj-$(CONFIG_SKYSIM) = $(skysim_OBJS)
+obj-y += $(sim-obj-y)

@@ -1,0 +1,11 @@
+.DS_Store
+Makefile.in
+aclocal.m4
+config.log
+configure
+autom4te.cache
+build*
+.vscode
+.devcontainer
+*.swp
+*.nvdla

@@ -1,0 +1,100 @@
+//===- NodeIRScheduler.h --------------------------------------------------===//
+//
+//                             The ONNC Project
+//
+// See LICENSE.TXT for details.
+//
+//===----------------------------------------------------------------------===//
+//
+// This file implements IR scheduler, especially focus on reorder load/store to
+// appropriate position for max performance.
+//
+//===----------------------------------------------------------------------===//
+#ifndef NODE_IR_SCHEDULER_H
+#define NODE_IR_SCHEDULER_H
+#include <onnc/Core/CustomPass.h>
+#include <onnc/Core/PassSupport.h>
+#include <onnc/Target/DLATargetBackend.h>
+#include <onnc/Target/TargetTransformInfo.h>
+#include <tuple>
+#include <unordered_map>
+#include <vector>
+
+namespace onnc {
+
+typedef std::vector<xNode *> Nodes;
+
+/** \class NodeIRScheduler
+ *  \brief onnx Graph IR scheduler. Reorder IR, especially load/store for
+ *         better, even maximum performance.
+ */
+class NodeIRScheduler : public CustomPass<NodeIRScheduler>
+{
+public:
+  struct ExeResUser
+  {
+    xNode *user;
+    uint64_t remainCycles;  /// Remaining cycles to finish executing the user.
+
+    ExeResUser(xNode *user, uint64_t rcycles)
+      : user(user), remainCycles(rcycles) {}
+  };
+
+  struct ExeCycle
+  {
+    xNode *node;
+    uint64_t begin, end;  /// Execution time: [begin, end)
+
+    ExeCycle(xNode *pNode, uint64_t pBegin, uint64_t pEnd)
+      : node(pNode), begin(pBegin), end(pEnd) {}
+  };
+
+  // <execution resource, list of <user, remaining cycles>>
+  using ExeResUserMap = std::unordered_map<const ExeResource*,
+                                           std::vector<ExeResUser>>;
+public:
+  virtual ~NodeIRScheduler();
+
+public:
+  NodeIRScheduler(DLATargetBackend* pDLATB = nullptr);
+
+  ReturnType runOnModule(Module& pModule) override;
+
+  ReturnType runOnGraph(xGraph &pGraph);
+
+  void getAnalysisUsage(AnalysisUsage& pUsage) const override;
+
+  void inorderSingleIssueSchedule(Module& pModule);
+
+  void print(OStream& pOS, const Module* pModule) const override;
+
+  void clear() override
+  {
+    m_SchedTimeLine.clear();
+    m_ExeResUsers.clear();
+    m_CurCycle = 0;
+  }
+
+private:
+  Nodes greedyPickNextNodes(Nodes &pCands);
+
+  bool isExeResAvailable(const ExeResource *pExeRes) const;
+
+  bool isAllExeResEmpty() const;
+
+  void addExeResUser(const ExeResource *pExeRes, xNode *pUser);
+
+  Nodes issue();
+
+private:
+  DLATargetBackend* m_DLATB;
+  std::vector<ExeCycle> m_SchedTimeLine;
+  uint64_t m_CurCycle;
+  ExeResUserMap m_ExeResUsers;
+};
+
+NodeIRScheduler *CreateNodeIRSchedulerPass(DLATargetBackend *pDLATB);
+
+}  // namespace of onnc
+
+#endif  // NODE_IR_SCHEDULER_H

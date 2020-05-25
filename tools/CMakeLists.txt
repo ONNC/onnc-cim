@@ -1,0 +1,12 @@
+add_subdirectory(unittests)
+add_subdirectory(onnc)
+add_subdirectory(onni)
+add_subdirectory(pb2t)
+add_subdirectory(readonnx)
+
+if (ENABLE_SOPHON_TARGET)
+    add_subdirectory(onnx2tg)
+endif()
+if (ENABLE_X86_TARGET)
+    add_subdirectory(onnc-jit)
+endif()

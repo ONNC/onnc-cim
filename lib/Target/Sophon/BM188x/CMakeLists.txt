@@ -1,0 +1,60 @@
+
+include(proto)
+gen_proto_cpp(PROTO ${CMAKE_CURRENT_LIST_DIR}/proto/common_calibration2.proto SRCS proto_src)
+
+add_libonnc_src(
+    ${proto_src}
+    AddDummyWeightPass.cpp
+    AddLutTablePass.cpp
+    BM188xBackend.cpp
+    BM188xEncodeInstsPass.cpp
+    BM188xTargetTransformInfo.cpp
+    BM188xTargetMemInfo.cpp
+    BM188xVisitor.cpp
+    BM188xFuseOptimizer.cpp
+    CodeEmitVisitor.cpp
+    FillWeightVisitor.cpp
+    GenRuntimeInfoPass.cpp
+    GenWeightPass.cpp
+    PrepareCtablePass.cpp
+    UpdateCtablePass.cpp
+    UpdateVisitor.cpp
+    ONNXDumpOptPass.cpp
+    Compute/AveragePool.cpp
+    Compute/Concat.cpp
+    Compute/Conv.cpp
+    Compute/Gemm.cpp
+    Compute/GlobalAveragePool.cpp
+    Compute/Load.cpp
+    Compute/LRN.cpp
+    Compute/LeakyRelu.cpp
+    Compute/MaxPool.cpp
+    Compute/Pool.cpp
+    Compute/PRelu.cpp
+    Compute/Sum.cpp
+    Compute/Store.cpp
+    Compute/SlicedConv.cpp
+    Compute/Relu.cpp
+    Compute/Transpose.cpp
+    Compute/BMScale.cpp
+    Compute/Upsample.cpp
+    Lowers/AveragePoolLower.cpp
+    Lowers/ConcatLower.cpp
+    Lowers/ConvLower.cpp
+    Lowers/GemmLower.cpp
+    Lowers/GlobalAveragePoolLower.cpp
+    Lowers/LoadLower.cpp
+    Lowers/LRNLower.cpp
+    Lowers/LeakyReluLower.cpp
+    Lowers/MaxPoolLower.cpp
+    Lowers/PoolLower.cpp
+    Lowers/PReluLower.cpp
+    Lowers/SlicedConvLower.cpp
+    Lowers/StoreLower.cpp
+    Lowers/SumLower.cpp
+    Lowers/TransposeLower.cpp
+    Lowers/BMScaleLower.cpp
+    Lowers/ReluLower.cpp
+    Lowers/UpsampleLower.cpp)
+
+add_subdirectory(asm)

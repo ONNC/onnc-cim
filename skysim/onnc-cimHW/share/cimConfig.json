@@ -1,0 +1,13 @@
+{
+  "xbarNum": 1,
+  "xbarSize": {
+    "wordlines": 10,
+    "OUSize": 5
+  },
+  "QuantizeLength": {
+    "X": {"Int": 8, "Fraction": 8},
+    "W": {"Int": 8, "Fraction": 8}
+  },
+  "ErrorModel": "",
+  "Verbose": 0
+}
